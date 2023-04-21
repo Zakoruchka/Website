@@ -6,12 +6,17 @@ from flask import jsonify
 
 def get_args(req=False):
     parser = reqparse.RequestParser()
-    parser.add_argument('nickname', required=req)
-    parser.add_argument('email', required=req)
-    parser.add_argument('hashed_password', required=req)
-    parser.add_argument('description', required=req)
+    parser.add_argument('name', required=req)
+    parser.add_argument('nested', default=False, type=bool)
     args = parser.parse_args()
     return args
+
+
+def need_nested():
+    parser = reqparse.RequestParser()
+    parser.add_argument('nested', default=False, type=bool)
+    args = parser.parse_args()
+    return args['nested']
 
 
 def abort_if_category_not_found(category_id):
@@ -22,16 +27,16 @@ def abort_if_category_not_found(category_id):
 
 
 def upgrade_category(category, args):
-    for i in ['nickname', 'email', 'hashed_password', 'description']:
-        if args[i] is not None:
-            exec(f'category.{i} = args[\'{i}\']')
+    if args['name'] is not None:
+        category.name = args['name']
     return category
 
 
-def second_to_dict(category):
-    return (category.to_dict(rules=('-websites', '-help_in')) |
-            {'help_in': [i.to_dict(rules=('-helpers', '-categories', '-owner_category')) for i in category.help_in]} |
-            {'websites': [i.to_dict(rules=('-helpers', '-categories', '-owner_category')) for i in category.websites]})
+def nested_to_dict(category, need_nested):
+    if need_nested:
+        return (category.to_dict(rules=('-websites',)) |
+                {'websites': [i.to_dict(rules=('-helpers', '-categories', '-owner_user')) for i in category.websites]})
+    return category.to_dict(rules=('-websites',))
 
 
 class CategoriesResource(Resource):
@@ -39,7 +44,7 @@ class CategoriesResource(Resource):
         abort_if_category_not_found(category_id)
         session = create_session()
         category = session.query(Category).get(category_id)
-        return jsonify({'category': second_to_dict(category)})
+        return jsonify({'category': nested_to_dict(category, need_nested())})
 
     def put(self, category_id):
         abort_if_category_not_found(category_id)
@@ -57,8 +62,6 @@ class CategoriesResource(Resource):
         session = create_session()
         if session.query(Category).get(category_id):
             abort(400, message=f"Id {category_id} already used")
-        if session.query(Category).filter(Category.email == str(args['email'])).first():
-            abort(400, message=f"Email {args['email']} already used")
         category = upgrade_category(Category(id=category_id), args)
         session.add(category)
         session.commit()
@@ -77,13 +80,12 @@ class CategoriesListResource(Resource):
     def get(self):
         session = create_session()
         categories = session.query(Category).all()
-        return jsonify({'categories': [second_to_dict(i) for i in categories]})
+        nested = need_nested()
+        return jsonify({'categories': [nested_to_dict(i, nested) for i in categories]})
 
     def post(self):
         args = get_args(req=True)
         session = create_session()
-        if session.query(Category).filter(Category.email == str(args['email'])).first():
-            abort(400, message=f"Email {args['email']} already used")
         category = upgrade_category(Category(), args)
         session.add(category)
         session.commit()

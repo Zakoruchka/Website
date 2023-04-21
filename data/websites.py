@@ -20,6 +20,3 @@ class Website(SqlAlchemyBase, SerializerMixin):
     link = Column(sqlalchemy.String, nullable=True)
     description = Column(sqlalchemy.String, nullable=True)
     owner = Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('users.id'), nullable=True)
-
-
-Website().categories.append()

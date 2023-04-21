@@ -31,7 +31,7 @@ def upgrade_user(user, args):
     return user
 
 
-def second_to_dict(user):
+def nested_to_dict(user):
     return (user.to_dict(rules=('-websites', '-help_in')) |
             {'help_in': [i.to_dict(rules=('-helpers', '-categories', '-owner_user')) for i in user.help_in]} |
             {'websites': [i.to_dict(rules=('-helpers', '-categories', '-owner_user')) for i in user.websites]})
@@ -42,7 +42,7 @@ class UsersResource(Resource):
         abort_if_user_not_found(user_id)
         session = create_session()
         user = session.query(User).get(user_id)
-        return jsonify({'user': second_to_dict(user)})
+        return jsonify({'user': nested_to_dict(user)})
 
     def put(self, user_id):
         abort_if_user_not_found(user_id)
@@ -80,7 +80,7 @@ class UsersListResource(Resource):
     def get(self):
         session = create_session()
         users = session.query(User).all()
-        return jsonify({'users': [second_to_dict(i) for i in users]})
+        return jsonify({'users': [nested_to_dict(i) for i in users]})
 
     def post(self):
         args = get_args(req=True)

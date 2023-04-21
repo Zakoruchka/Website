@@ -32,11 +32,11 @@ def upgrade_website(website, args):
     return website
 
 
-def second_to_dict(website):
+def nested_to_dict(website):
     a = (website.to_dict(rules=('-categories', '-helpers', '-owner_user', '-owner')) |
-            {'categories': [i.to_dict(rules=('-websites',)) for i in website.categories]} |
-            {'helpers': [i.to_dict(rules=('-websites', '-help_in')) for i in website.helpers]} |
-            {'owner_user': website.owner_user.to_dict(rules=('-websites', '-help_in'))})
+         {'categories': [i.to_dict(rules=('-websites',)) for i in website.categories]} |
+         {'helpers': [i.to_dict(rules=('-websites', '-help_in')) for i in website.helpers]} |
+         {'owner_user': website.owner_user.to_dict(rules=('-websites', '-help_in'))})
     return a
 
 
@@ -45,7 +45,7 @@ class WebsitesResource(Resource):
         abort_if_website_not_found(website_id)
         session = create_session()
         website = session.query(Website).get(website_id)
-        return jsonify({'website': second_to_dict(website)})
+        return jsonify({'website': nested_to_dict(website)})
 
     def put(self, website_id):
         abort_if_website_not_found(website_id)
@@ -81,7 +81,7 @@ class WebsitesListResource(Resource):
     def get(self):
         session = create_session()
         websites = session.query(Website).all()
-        return jsonify({'websites': [second_to_dict(i) for i in websites]})
+        return jsonify({'websites': [nested_to_dict(i) for i in websites]})
 
     def post(self):
         args = get_args(req=True)
