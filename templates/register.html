@@ -7,7 +7,7 @@
             <p>
                 {{i.label}}<br>
                 {{i(class="form-control")}}<br>
-                {%for error in field.errors%}
+                {%for error in i.errors%}
                     <div class="alert alert-danger" role="alert">
                         {{error}}
                     </div>

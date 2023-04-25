@@ -8,6 +8,7 @@ from models.login_form import LoginForm
 from models.register_form import RegisterForm
 from data.users import User
 from data.db_session import global_init, create_session
+from requests import get
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 login_manager = LoginManager()
@@ -19,12 +20,23 @@ api.add_resource(WebsitesResource, '/api/websites/<int:website_id>')
 api.add_resource(WebsitesListResource, '/api/websites')
 api.add_resource(CategoriesResource, '/api/categories/<int:category_id>')
 api.add_resource(CategoriesListResource, '/api/categories')
+hostport = 'http://127.0.0.1:8080'
+users_api = '/api/users'
+websites_api = '/api/websites'
+categories_api = '/api/categories'
 
 
 @login_manager.user_loader
 def load_user(user_id):
     session = create_session()
     return session.query(User).get(user_id)
+
+
+@app.route('/')
+def main_window():
+    websites = get(hostport + websites_api).json()['websites']
+    print(websites)
+    return render_template('main_window.html', title='Главная страница', websites=websites)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -34,8 +46,7 @@ def register():
         if form.password.data == form.repeat.data:
             session = create_session()
             if not session.query(User).filter(User.email == str(form.email.data)).first():
-                us = User(email=form.email.data, name=form.name.data, surname=form.surname.data, age=form.age.data,
-                          position=form.position.data, speciality=form.speciality.data, address=form.address.data)
+                us = User(nickname=form.nickname.data, description=form.description.data, email=form.email.data)
                 us.set_password(form.password.data)
                 session.add(us)
                 session.commit()

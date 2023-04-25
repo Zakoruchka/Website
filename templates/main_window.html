@@ -1,0 +1,19 @@
+{%extends "base.html"%}
+{%block content%}
+    <h1>Список сайтов</h1>
+    {%for i in websites%}
+        <table>
+            <tr>
+                <th colspan="3"><div align="center"><a class="navbar-brand" href="/{{i['name']}}">{{i['name']}}</a></div></th>
+            </tr>
+            <tr>
+                <td rowspan="2">{{i['description']}}</td>
+                <td rowspan="2">{%for j in i['categories']%}{{j['name']}}<br>{%endfor%}</td>
+                <td>Создатель - {{i['owner_user']['nickname']}}</td>
+            </tr>
+            <tr>
+                <td><a class="navbar-brand" href="/{{i['link']}}">Ссылка</a></td>
+            </tr>
+        </table>
+    {%endfor%}
+{%endblock%}

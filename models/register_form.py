@@ -8,4 +8,5 @@ class RegisterForm(FlaskForm):
     description = TextAreaField('Описание')
     email = EmailField('Почта', validators=[DataRequired()])
     password = PasswordField('Пароль', validators=[DataRequired()])
+    repeat = PasswordField('Повторить пароль', validators=[DataRequired()])
     submit = SubmitField('Зарегистрироваться')
