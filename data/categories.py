@@ -16,3 +16,7 @@ class Category(SqlAlchemyBase, SerializerMixin):
     __tablename__ = 'categories'
     id = Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
     name = Column(sqlalchemy.String, nullable=True)
+
+    def __init__(self, **kwargs):
+        if 'name' in kwargs:
+            self.name = kwargs['name']

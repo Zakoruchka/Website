@@ -11,10 +11,15 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
     websites = orm.relationship("Website", backref='owner_user')
     help_in = orm.relationship("Website", secondary="users_to_websites", backref="helpers")
     id = Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
-    nickname = Column(sqlalchemy.String, nullable=True)
-    email = Column(sqlalchemy.String, unique=True)
-    hashed_password = Column(sqlalchemy.String, nullable=True)
+    nickname = Column(sqlalchemy.String)
     description = Column(sqlalchemy.String, nullable=True)
+    email = Column(sqlalchemy.String)
+    hashed_password = Column(sqlalchemy.String)
+
+    def __init__(self, **kwargs):
+        for i in ['nickname', 'email', 'hashed_password', 'description']:
+            if i in kwargs:
+                exec(f'self.{i} = kwargs[\'{i}\']')
 
     def __repr__(self):
         return self.nickname
