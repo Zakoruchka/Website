@@ -1,5 +1,8 @@
 from flask import Flask, render_template, redirect, request
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+from models.users_resources import UsersResource, UsersListResource
+from models.websites_resource import WebsitesResource, WebsitesListResource
+from models.categories_resources import CategoriesResource, CategoriesListResource
 from models.login_form import LoginForm
 from models.register_form import RegisterForm
 from models.search_form import SearchForm
@@ -11,11 +14,19 @@ from data.categories import Category
 from data.db_session import global_init, create_session
 from requests import get, put
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_restful import Api
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
+api = Api(app)
+api.add_resource(UsersResource, '/api/users/<int:user_id>')
+api.add_resource(UsersListResource, '/api/users')
+api.add_resource(WebsitesResource, '/api/websites/<int:website_id>')
+api.add_resource(WebsitesListResource, '/api/websites')
+api.add_resource(CategoriesResource, '/api/categories/<int:category_id>')
+api.add_resource(CategoriesListResource, '/api/categories')
 login_manager = LoginManager()
 login_manager.init_app(app)
-api_port = 'http://127.0.0.1:5000'
+api_port = 'http://127.0.0.1:8080'
 users_api = '/api/users'
 websites_api = '/api/websites'
 categories_api = '/api/categories'
