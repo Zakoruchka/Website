@@ -1,0 +1,12 @@
+{%extends "base.html"%}
+{%block content%}
+    <h1>{{user['nickname']}}</h1>
+    <h2>{{user['description']}}</h2>
+    <h2>Почта: {{user['email']}}</h2>
+    <h2>Владелеет сайтами {%for i in user['websites']%}<a class="h2-font" href="/websites/{{i.id}}">{{i.name}}</a>{%if not loop.last%}, {%endif%}{%endfor%}</h2>
+    <h2>Помогал в создании сайтов {%for i in user['help_in']%}<a class="h2-font" href="/websites/{{i.id}}">{{i.name}}</a>{%if not loop.last%}, {%endif%}{%endfor%}</h2>
+    {%if current_user.is_authenticated and current_user['id'] == user['id']%}
+        <a class="btn btn-success" href="/users/change/{{user['id']}}">Редактировать профиль</a>
+        <a class="btn btn-danger" href="/logout">Выйти из аккаунта</a>
+    {%endif%}
+{%endblock%}

@@ -1,0 +1,18 @@
+{%extends "base.html"%}
+{%block content%}
+    <h1>Добавление сайта</h1>
+    <form action="" method="post">
+        {{form.hidden_tag()}}
+        {%for i in form if i.name not in ['csrf_token', 'submit']%}
+            {{i.label}}<br>
+            {{i(class="form-control")}}<br>
+            {%for error in i.errors%}
+                <div class="alert alert-danger" role="alert">
+                    {{error}}
+                </div>
+            {%endfor%}
+        {%endfor%}
+        <p>{{form.submit(type="submit", class="btn btn-primary")}}<br>
+        {{message}}
+    </form>
+{%endblock%}

@@ -20,8 +20,3 @@ class Website(SqlAlchemyBase, SerializerMixin):
     link = Column(sqlalchemy.String)
     description = Column(sqlalchemy.String, nullable=True)
     owner = Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('users.id'))
-
-    def __init__(self, params=dict):
-        for i in ['name', 'link', 'description', 'owner']:
-            if i in params:
-                exec(f'self.{i} = kwargs[\'{i}\']')

@@ -9,18 +9,27 @@
     <title>{{title}}</title>
 </head>
 <body>
-    <h1 class="leftstr">Сайт сайтов</h1>
-    <nav class="rightstr">
-        {%if current_user.is_authenticated%}
-            <a class="navbar-brand" href="/logout">{{current_user.nickname}}</a>
-        {%else%}
-            <p>
-                <a class="btn btn-primary " href="/register">Зарегистрироваться</a>
-                <a class="btn btn-success" href="/login">Войти</a>
-            </p>
-        {%endif%}
-    </nav>
-    <main role="main" class="container">
+    <table class="floatable" width="100%">
+        <tr>
+            <td>
+                <h1>Сайтотека</h1>
+            </td>
+            <td>
+                <a class="btn btn-primary" href="/">На главную страницу</a>
+            </td>
+            <td align="right">
+                <nav>{%if current_user.is_authenticated%}
+                    <a class="navbar-brand" href="/users/{{current_user['id']}}">{{current_user.nickname}}</a>
+                    {%else%}
+                    <p>
+                        <a class="btn btn-primary" href="/register">Зарегистрироваться</a>
+                        <a class="btn btn-success" href="/login">Войти</a>
+                    </p>
+                {%endif%}</nav>
+            </td>
+        </tr>
+    </table>
+    <main>
         {%block content%}{%endblock%}
     </main>
 </body>
