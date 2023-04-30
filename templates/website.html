@@ -2,7 +2,7 @@
 {%block content%}
     <h1>{{website['name']}}</h1>
     <h2>{{website['description']}}</h2>
-    <h2>Ссылка: <a href="{{website['link']}}">{{website['link']}}</a></h2>
+    <h2>Ссылка: <a href="http://{{website['link']}}">{{website['link']}}</a></h2>
     <h2>Владелец: <a href="/users/{{website['owner_user']['id']}}">{{website['owner_user']['nickname']}}</a></h2>
     <h2>Помогали в создании: {%for i in website['helpers']%}<a href="/users/{{i['id']}}">{{i['nickname']}}</a>{%if not loop.last%}, {%endif%}{%endfor%}</h2>
     {%if current_user.is_authenticated and current_user.id == website['owner_user']['id']%}
